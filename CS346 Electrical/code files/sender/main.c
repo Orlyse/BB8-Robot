@@ -38,8 +38,8 @@ int main(void){
     printf("About to init radio\n");
     nrf_802154_init();
     printf("Done with init\n");
-    nrf_802154_channel_set(11);
-    uint8_t src_pan_id[] = {0xcd, 0xab}; 
+    nrf_802154_channel_set(16);
+    uint8_t src_pan_id[] = {0xbe, 0xef}; 
     nrf_802154_pan_id_set(src_pan_id);
     printf("Radio configured!\n");
 
@@ -61,16 +61,16 @@ int main(void){
         pack_packet(&src_extended_addr, &src_pan_id, &dst_extended_addr, &pkt, &payload);
 
         printf("Packet: [ ");
-        for (int i=0; i<pkt[0]-2; i++) {
+        for (int i=0; i<27; i++) {
         printf("%02X ", pkt[i]);
         }
-        printf("\n");
+        printf("]\n");
 
         if (!nrf_802154_transmit_raw(pkt, true)) {
         printf("Failure to send radio packet!\n");
         } else {
         printf("Sent a radio packet!\n");
         }
-        nrf_delay_ms(1000);
+        nrf_delay_ms(500);
     }
 }
