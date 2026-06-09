@@ -13,3 +13,5 @@ void move_car(float direction, float magnitude);
 
 // Helper for moving motor
 void move_motor(int motor, float percentage);
+
+void update_motors(void);

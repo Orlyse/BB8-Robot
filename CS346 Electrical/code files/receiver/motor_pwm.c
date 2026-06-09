@@ -19,7 +19,9 @@
 static const nrfx_pwm_t PWM_INST0 = NRFX_PWM_INSTANCE(0);
 
 // Holds duty cycle values to trigger PWM toggle
-nrf_pwm_values_individual_t sequence_data0[1] = {0};
+nrf_pwm_values_individual_t sequence_data0[1] = {
+    {0x8000, 0x8000, 0x8000, 0x8000}
+};
 
 // Sequence structure for configuring DMA
 nrf_pwm_sequence_t pwm_sequence0 = {
@@ -96,10 +98,12 @@ void move_car(float direction, float magnitude){
     move_motor(2, magnitude * sinf(theta));
     move_motor(3, -magnitude * cosf(theta));
     move_motor(4, -magnitude * sinf(theta));
+
+    nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
 }
 
 void move_motor(int motor, float percentage) {
-    uint16_t top_v = 500 * percentage;
+    uint16_t top_v = (uint16_t)(500.0f * fabsf(percentage));
     if (motor == 1) {
         sequence_data0[0].channel_0 = top_v | (1 << 15);
         if (percentage >= 0.0) {
@@ -120,7 +124,7 @@ void move_motor(int motor, float percentage) {
             nrf_gpio_pin_clear(EDGE_P7);
         }
         
-    } else if (motor == 3) {
+    } else if (motor == 4) {
         sequence_data0[0].channel_2 = top_v | (1 << 15);
         if (percentage >= 0.0) {
             nrf_gpio_pin_set(EDGE_P10);
@@ -128,7 +132,7 @@ void move_motor(int motor, float percentage) {
             nrf_gpio_pin_clear(EDGE_P10);
         }
         
-    } else if (motor == 4) {
+    } else if (motor == 3) {
         sequence_data0[0].channel_3 = top_v | (1 << 15);
         if (percentage >= 0.0) {
             nrf_gpio_pin_set(EDGE_P12);
@@ -136,6 +140,10 @@ void move_motor(int motor, float percentage) {
             nrf_gpio_pin_clear(EDGE_P12);
         }
     } 
+}
+
+void update_motors(void) {
+    nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
 }
 
 /*

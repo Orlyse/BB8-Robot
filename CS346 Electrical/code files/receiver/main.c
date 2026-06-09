@@ -50,11 +50,19 @@ int main(void) {
         }
         printf("\n");
 
-        move_car(direction, 0.25);
+        move_car(direction, 0.8);
+
+        // move_motor(1, 0.5);
+        // move_motor(2, 0.5);
+        // move_motor(3, 0.5);
+        // move_motor(4, 0.5);
+
+        update_motors();
 
         nrf_delay_ms(1000);
 
         direction += 45.0;
+        printf("Direction %f\n", direction);
         if (direction == 360) {
             direction = 0.0;
         }
