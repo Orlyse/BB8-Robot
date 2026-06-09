@@ -72,22 +72,12 @@ int get_dir(){
 
     printf("dir x = %d  dir y = %d\n", dirx, diry);
 
-    if (dirx > 500 && diry < 50){
-      return 1;
-    }
-    else if (dirx > 500 && diry > 1000){
-      return 2;
-    }
-    else if (dirx < 50 && diry > 500){
-      return 3;
-    }
-    else if (dirx > 1000 && diry > 500){
-      return 4;
-    }
-    else{
-      return 5;
-    }
-    
-    return 0;
+    /*
+    0 degrees x = 507 y = 503 (joystick untouched)
+    1/360 degrees (507, 0)
+    90 (1023, 503)
+    180 (507, 1023)
+    270 (0, 503) 
+    */
 }
 

@@ -15,7 +15,7 @@
 
 // Global variables
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 1, 0);
-APP_TIMER_DEF(joystick_timer);
+//  APP_TIMER_DEF(joystick_timer);
 
 static void get_direction(void* _unused){
     uint8_t dir = get_dir(); 
@@ -56,10 +56,12 @@ int main(void){
     
     while(1){
         uint8_t direction = get_dir(); 
+
         uint8_t payload[3] = {0x00, 0x00, direction};
 
-        pack_packet(&src_extended_addr, &src_pan_id, &dst_extended_addr, &pkt, &payload);
+        pack_packet(src_extended_addr, src_pan_id, dst_extended_addr, pkt, payload);
 
+        /*
         printf("Packet: [ ");
         for (int i=0; i<27; i++) {
         printf("%02X ", pkt[i]);
@@ -71,6 +73,7 @@ int main(void){
         } else {
         printf("Sent a radio packet!\n");
         }
+        */
         nrf_delay_ms(500);
     }
 }
