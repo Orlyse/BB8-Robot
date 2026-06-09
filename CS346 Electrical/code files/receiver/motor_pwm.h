@@ -1,13 +1,6 @@
 #pragma once
 #include "nrf_twi_mngr.h"
 
-typedef enum {
-    FORWARD,
-    BACK,
-    LEFT, 
-    RIGHT,
-    STOP
-}car_dir;
 
 // Initialize 4 pwm channels with shared frequency
 void pwm_init();
@@ -16,4 +9,9 @@ void pwm_init();
 void analog_input_pin_setup();
 
 // Move input direction
-void move_car(car_dir direction);
+void move_car(float direction, float magnitude);
+
+// Helper for moving motor
+void move_motor(int motor, float percentage);
+
+void update_motors(void);

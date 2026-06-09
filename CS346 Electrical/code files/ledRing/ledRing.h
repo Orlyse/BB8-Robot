@@ -14,5 +14,5 @@ void clock_start(void);
 void clock_stop(void);
 
 // Generate LED values for specific angle and color for a certain number of LEDs
-void generate_array(float angle, int red, int green, int blue, int fill_red, int fill_green, int fill_blue, int led_count);
+void generate_array(float angle, int red, int green, int blue, int fill_red, int fill_green, int fill_blue, int led_count_out, int led_count_mid, int led_count_mid_in, int led_count_in);
 

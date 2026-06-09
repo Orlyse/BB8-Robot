@@ -17,10 +17,6 @@
 NRF_TWI_MNGR_DEF(twi_mngr_instance, 1, 0);
 //  APP_TIMER_DEF(joystick_timer);
 
-static void get_direction(void* _unused){
-    uint8_t dir = get_dir(); 
-}
-
 int main(void){
     printf("Board started!\n");
 
@@ -48,32 +44,31 @@ int main(void){
     nrf_802154_extended_address_set(src_extended_addr);
     uint8_t dst_extended_addr[] = {0x50, 0xbe, 0xca, 0xc3, 0x3c, 0x36, 0xce, 0xf4};
 
-    //app_timer_init();
-    //app_timer_create(&joystick_timer, APP_TIMER_MODE_REPEATED, get_direction);
-    //app_timer_start(joystick_timer, 32768, NULL);
-
     uint8_t pkt[PSDU_MAX_SIZE];
     
-    while(1){
-        uint8_t direction = get_dir(); 
+    float degree, magnitude;
 
-        uint8_t payload[3] = {0x00, 0x00, direction};
+    while(1){   
 
+        cartesian_to_polar(get_dirx(), get_diry(), &degree, &magnitude);
+        uint8_t payload[3] = {0x00, (uint8_t)degree, (uint8_t)magnitude};
+        
+        printf("degree = %2f magnitude = %2f\n", degree, magnitude);
         pack_packet(src_extended_addr, src_pan_id, dst_extended_addr, pkt, payload);
-
-        /*
-        printf("Packet: [ ");
-        for (int i=0; i<27; i++) {
-        printf("%02X ", pkt[i]);
-        }
-        printf("]\n");
+        
+        
+        // printf("Packet: [ ");
+        // for (int i=0; i<27; i++) {
+        // printf("%02X ", pkt[i]);
+        // }
+        // printf("]\n");
 
         if (!nrf_802154_transmit_raw(pkt, true)) {
         printf("Failure to send radio packet!\n");
         } else {
-        printf("Sent a radio packet!\n");
+        // printf("Sent a radio packet!\n");
         }
-        */
-        nrf_delay_ms(500);
+        
+        //nrf_delay_ms(1000);
     }
 }

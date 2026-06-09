@@ -17,6 +17,7 @@ _build/motor_pwm.o: motor_pwm.c \
  /usr/include/newlib/sys/timespec.h /usr/include/newlib/sys/_timespec.h \
  /usr/include/newlib/sys/_pthreadtypes.h /usr/include/newlib/sys/sched.h \
  /usr/include/newlib/machine/types.h /usr/include/newlib/sys/stdio.h \
+ /usr/include/newlib/math.h \
  /root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/nrf.h \
  /root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/nrf52833.h \
  /root/nu-microbit-base/software/nrf52x-base//lib/CMSIS_5/CMSIS/Core/Include/core_cm4.h \

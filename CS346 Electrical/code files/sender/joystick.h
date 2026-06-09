@@ -20,4 +20,6 @@ typedef enum {
 
 static uint8_t i2c_reg_read(uint8_t i2c_addr, uint8_t reg_addr);
 void joystick_init(const nrf_twi_mngr_t* i2c);
-int get_dir(void);
+int get_dirx();
+int get_diry();
+void cartesian_to_polar(int x, int y, float* degrees, float* magnitude);

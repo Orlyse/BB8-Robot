@@ -1,0 +1,43 @@
+# ---- Build output directories ----
+build/
+_build/
+obj/
+bin/
+out/
+
+# ---- Compiled object / dependency files ----
+*.o
+*.obj
+*.d
+*.a
+*.lib
+
+# ---- Firmware / linker artifacts ----
+*.elf
+*.out
+*.hex
+*.bin
+*.map
+*.lst
+*.lss
+*.sym
+
+# ---- Debug / flashing leftovers ----
+*.jlink
+*.gdbinit
+JLink*.log
+.gdb_history
+
+# ---- Editor / IDE ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cache/
+compile_commands.json
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+desktop.ini

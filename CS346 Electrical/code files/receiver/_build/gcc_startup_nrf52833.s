@@ -1,11 +1,11 @@
-# 1 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 1 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
 # 1 "<built-in>"
 # 1 "<command-line>"
-# 1 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
-# 23 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 1 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 23 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
     .syntax unified
     .arch armv7e-m
-# 33 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 33 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
     .section .stack
 
 
@@ -191,7 +191,7 @@ __isr_vector:
     .globl Reset_Handler
     .type Reset_Handler, %function
 Reset_Handler:
-# 229 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 229 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
     ldr r1, =__etext
     ldr r2, =__data_start__
     ldr r3, =__bss_start__
@@ -206,7 +206,7 @@ Reset_Handler:
     bgt .L_loop1
 
 .L_loop1_done:
-# 272 "../../nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
+# 272 "/root/nu-microbit-base/software/nrf52x-base//sdk/nrf5_sdk_16.0.0/modules/nrfx/mdk/gcc_startup_nrf52833.S"
     bl SystemInit
 
 

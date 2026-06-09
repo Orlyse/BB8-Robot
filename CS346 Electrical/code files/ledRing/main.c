@@ -22,7 +22,7 @@ static void rotate_ring(void* _unused) {
     if (angle == 360.0) {
         angle = 0.0;
     }
-    generate_array(angle, 255, 0, 0, 0, 0, 255, 48);
+    generate_array(angle, 60, 0, 0, 0, 0, 60, 60, 48, 40, 32);
     push_frame();
 }
 
@@ -32,13 +32,13 @@ int main(void) {
 
     clock_init();
 
-    generate_array(0, 255, 255, 255, 255, 255, 255, 48);
+    generate_array(0.0, 255, 255, 255, 255, 255, 255, 60, 48, 40, 32);
 
     push_frame();
 
     app_timer_init();
     app_timer_create(&my_timer_1, APP_TIMER_MODE_REPEATED, rotate_ring);
-    app_timer_start(my_timer_1, 1000, NULL);
+    app_timer_start(my_timer_1, 5000, NULL);
 
 
     while (1) {

@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
+#include <math.h>
 #include "nrf.h"
 #include "nrf_delay.h"
 
@@ -61,16 +61,14 @@ void joystick_init(const nrf_twi_mngr_t* i2c){
     printf("Joystick ID = %x\n", ID);
 }   
 
-int get_dir(){
+int get_dirx(){
     uint8_t dirx_msb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_X_MSB);
     uint8_t dirx_lsb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_X_LSB);
     uint16_t dirx = ((dirx_msb << 8) | (dirx_lsb)) >> 6;
 
-    uint8_t diry_msb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_Y_MSB);
-    uint8_t diry_lsb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_Y_LSB);
-    uint16_t diry = ((diry_msb << 8) | (diry_lsb)) >> 6;
+    
 
-    printf("dir x = %d  dir y = %d\n", dirx, diry);
+    //printf("dir x = %d  dir y = %d\n", dirx, diry);
 
     /*
     0 degrees x = 507 y = 503 (joystick untouched)
@@ -79,5 +77,45 @@ int get_dir(){
     180 (507, 1023)
     270 (0, 503) 
     */
+   return dirx;
+}
+
+int get_diry(){
+    uint8_t diry_msb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_Y_MSB);
+    uint8_t diry_lsb = i2c_reg_read(sparkfun_qwiic_joystick_addr, JOYSTICK_Y_LSB);
+    uint16_t diry = ((diry_msb << 8) | (diry_lsb)) >> 6;
+
+    return diry;
+} 
+
+const int x_center = 507, x_min = 0, x_max = 1023;
+const int y_center = 503, y_min = 0, y_max = 1023;
+
+void cartesian_to_polar(int x, int y, float* degrees, float* magnitude){
+    int dx = x-x_center;
+    int dy = y-y_center;
+
+    float nx = (dx >= 0) ? (float)dx/(x_max-x_center) : (float)dx/(x_center-x_min);
+    float ny = (dy >= 0) ? (float)dy/(y_max-y_center) : (float)dy/(y_center-y_min);
+
+    float raw_mag = sqrtf((nx*nx) + (ny*ny));
+    
+    if (raw_mag > 1) raw_mag = 1.0f;
+
+    if (raw_mag < 0.08) {
+      *magnitude = 0.0f;
+      *degrees = 0.0f; 
+    }
+
+    *magnitude = raw_mag;
+
+    float angle = atan2f(nx, -ny) * 180.0f / (float)M_PI;
+    
+    if (angle < 0){
+      angle += 360.0f;  
+    }
+    *degrees = angle; 
+
+    return;
 }
 

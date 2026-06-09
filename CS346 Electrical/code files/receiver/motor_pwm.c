@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "nrf.h"
 #include "nrf_delay.h"
@@ -13,11 +14,14 @@
 #include "microbit_v2.h"
 #include "motor_pwm.h"
 
+
 // PWM configuration
 static const nrfx_pwm_t PWM_INST0 = NRFX_PWM_INSTANCE(0);
 
 // Holds duty cycle values to trigger PWM toggle
-nrf_pwm_values_individual_t sequence_data0[1] = {0};
+nrf_pwm_values_individual_t sequence_data0[1] = {
+    {0x8000, 0x8000, 0x8000, 0x8000}
+};
 
 // Sequence structure for configuring DMA
 nrf_pwm_sequence_t pwm_sequence0 = {
@@ -67,9 +71,9 @@ void pwm_init(void) {
     pwmConfig_0.output_pins[2] = EDGE_P2;
     pwmConfig_0.output_pins[3] = EDGE_P3;
 
-    pwmConfig_0.base_clock = NRF_PWM_CLK_1MHz; // (NRF_PWM_CLK_1MHz, 2, 4, 8, 16Mhz available)
+    pwmConfig_0.base_clock = NRF_PWM_CLK_500kHz; // (NRF_PWM_CLK_500kHz, 2, 4, 8, 16Mhz available)
     pwmConfig_0.count_mode = NRF_PWM_MODE_UP;
-    pwmConfig_0.top_value = 1000;   // counter top
+    pwmConfig_0.top_value = 500;   // counter top
     pwmConfig_0.load_mode = NRF_PWM_LOAD_INDIVIDUAL;  // each pin controlled individually
     pwmConfig_0.step_mode = 0;
     nrfx_pwm_init(&PWM_INST0, &pwmConfig_0, NULL);
@@ -88,99 +92,62 @@ Backward: CCW   CW      CCW     CW
 Left: CCW   CW      CW      CCW
 Right: CW   CCW     CCW     CW
 */ 
-void move_car(car_dir direction){
-    float duty_cyle = 0.5;
-    uint16_t top_v = (uint16_t) (1000*duty_cyle);
+void move_car(float direction, float magnitude){
+    float theta = direction * (M_PI / 180.0);
+    move_motor(1, magnitude * cosf(theta));
+    move_motor(2, magnitude * sinf(theta));
+    move_motor(3, -magnitude * cosf(theta));
+    move_motor(4, -magnitude * sinf(theta));
 
-    switch (direction){
-        case FORWARD:
-            // Red Hbridge (1, 2)
-            // CCW
+    nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
+}
+
+void move_motor(int motor, float percentage) {
+    uint16_t top_v = (uint16_t)(500.0f * fabsf(percentage));
+    if (motor == 1) {
+        sequence_data0[0].channel_0 = top_v | (1 << 15);
+        if (percentage >= 0.0) {
             nrf_gpio_pin_set(EDGE_P5);
             nrf_gpio_pin_clear(EDGE_P6);
-            sequence_data0[0].channel_0 = top_v | (1 << 15);
-
-            // CW
-            nrf_gpio_pin_set(EDGE_P7);
-            nrf_gpio_pin_clear(EDGE_P8);
-            sequence_data0[0].channel_1 = top_v | (1 << 15);
-
-            // Black Hbridge (3, 4)
-
-            // CW
-            nrf_gpio_pin_set(EDGE_P10);
-            sequence_data0[0].channel_2 = top_v | (1 << 15);
-
-            // CCW
-            nrf_gpio_pin_clear(EDGE_P12);
-            sequence_data0[0].channel_3 = top_v | (1 << 15);
-
-            // Send PWM data
-            nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
-
-            break;
-        
-        case BACK:
-            // Red Hbridge (1, 2)
-            // CCW
+        } else if (percentage < 0.0) {
             nrf_gpio_pin_set(EDGE_P6);
             nrf_gpio_pin_clear(EDGE_P5);
-            sequence_data0[0].channel_0 = top_v | (1 << 15);
-
-            // CW
-            nrf_gpio_pin_set(EDGE_P8);
-            nrf_gpio_pin_clear(EDGE_P7);
-            sequence_data0[0].channel_1 = top_v | (1 << 15);
-
-            // Black Hbridge (3, 4)
-
-            // CW
-            nrf_gpio_pin_clear(EDGE_P10);
-            sequence_data0[0].channel_2 = top_v | (1 << 15);
-
-            // CCW
-            nrf_gpio_pin_set(EDGE_P12);
-            sequence_data0[0].channel_3 = top_v | (1 << 15);
-
-            // Send PWM data
-            nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
-
-            break;       
+        }
         
-        case LEFT:   
-            // Red Hbridge (1, 2)
-            // CCW
-            nrf_gpio_pin_set(EDGE_P5);
-            nrf_gpio_pin_clear(EDGE_P6);
-            sequence_data0[0].channel_0 = top_v | (1 << 15);
-
-            // CW
+    } else if (motor == 2) {
+        sequence_data0[0].channel_1 = top_v | (1 << 15);
+        if (percentage >= 0.0) {
+            nrf_gpio_pin_set(EDGE_P7);
+            nrf_gpio_pin_clear(EDGE_P8);
+        } else if (percentage < 0.0) {
             nrf_gpio_pin_set(EDGE_P8);
             nrf_gpio_pin_clear(EDGE_P7);
-            sequence_data0[0].channel_1 = top_v | (1 << 15);
-
-            // Black Hbridge (3, 4)
-
-            // CW
+        }
+        
+    } else if (motor == 4) {
+        sequence_data0[0].channel_2 = top_v | (1 << 15);
+        if (percentage >= 0.0) {
             nrf_gpio_pin_set(EDGE_P10);
-            sequence_data0[0].channel_2 = top_v | (1 << 15);
-
-            // CCW
+        } else if (percentage < 0.0) {
+            nrf_gpio_pin_clear(EDGE_P10);
+        }
+        
+    } else if (motor == 3) {
+        sequence_data0[0].channel_3 = top_v | (1 << 15);
+        if (percentage >= 0.0) {
             nrf_gpio_pin_set(EDGE_P12);
-            sequence_data0[0].channel_3 = top_v | (1 << 15);
+        } else if (percentage < 0.0) {
+            nrf_gpio_pin_clear(EDGE_P12);
+        }
+    } 
+}
 
-            // Send PWM data
-            nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
-
-            break; 
-
-        case RIGHT:
-            break;
-    }
+void update_motors(void) {
+    nrfx_pwm_simple_playback(&PWM_INST0, &pwm_sequence0, 1, NRFX_PWM_FLAG_LOOP);
 }
 
 /*
-Base clock = 1MHz
+Base clock = 500kHz
 Desired frequency = 1kHz
-Counter_top = 1000
+Counter_top = 500
 */
