@@ -18,6 +18,6 @@
 #define PSDU_MAX_SIZE (127) // Max length of a packet
 #define FCS_LENGTH (2) // Length of the Frame Control Sequence
 
-const int8_t payload[3] = {0x00, 0x00, 0x00};
+extern volatile int8_t payload[3];
 
 void nrf_802154_received_raw(uint8_t* p_data, int8_t power, uint8_t lqi);
