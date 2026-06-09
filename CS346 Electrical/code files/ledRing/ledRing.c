@@ -28,7 +28,7 @@ uint8_t one = 0b11100000;
 
 // Create clock
 void clock_init(void) {
-    NRF_SPIM0->PSEL.MOSI = 2;
+    NRF_SPIM0->PSEL.MOSI = EDGE_P15;
     NRF_SPIM0->PSEL.MISO = 0xFFFFFFFF;
     NRF_SPIM0->PSEL.SCK = 28;
     NRF_SPIM0->FREQUENCY = 0x40000000;

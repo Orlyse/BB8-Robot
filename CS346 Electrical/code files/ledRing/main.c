@@ -22,7 +22,7 @@ static void rotate_ring(void* _unused) {
     if (angle == 360.0) {
         angle = 0.0;
     }
-    generate_array(angle, 255, 0, 0, 0, 0, 255, 48);
+    generate_array(angle, 60, 0, 0, 0, 0, 60, 48);
     push_frame();
 }
 
