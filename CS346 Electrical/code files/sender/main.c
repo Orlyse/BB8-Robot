@@ -51,15 +51,17 @@ int main(void){
     while(1){   
 
         cartesian_to_polar(get_dirx(), get_diry(), &degree, &magnitude);
-        uint8_t payload[3] = {0x00, (uint8_t)degree, (uint8_t)magnitude};
+        uint16_t degree_big = (uint16_t)degree;
+        uint8_t degree_first = (degree_big >> 8) & 0xFF;
+        uint8_t degree_second = (degree_big & (0xFF));
+        uint8_t payload[3] = {degree_first, degree_second, (uint8_t)magnitude};
         
         printf("degree = %2f magnitude = %2f\n", degree, magnitude);
         pack_packet(src_extended_addr, src_pan_id, dst_extended_addr, pkt, payload);
         
-        
         // printf("Packet: [ ");
         // for (int i=0; i<27; i++) {
-        // printf("%02X ", pkt[i]);
+        //  printf("%02X ", pkt[i]);
         // }
         // printf("]\n");
 
